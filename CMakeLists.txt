@@ -7,7 +7,7 @@ project(dice)
 # Here, the executable is declared with its sources. "main", or "main.exe" on windows will be the program's name
 add_executable(
   dice
-  src/main.cpp
+  src/main.c
 )
 
 target_include_directories(dice PUBLIC "./src")
