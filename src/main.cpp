@@ -10,6 +10,18 @@
 typedef uint32_t u32;
 typedef  int32_t i32;
 
+const char *rank_strs[] = {
+	"2", "3", "4", "5", "6", "7", "8", "9", "10",
+	"Jack", "Queen", "King", "Ace",
+};
+const char *suit_strs[] = {
+	"Hearts",
+	"Diamonds",
+	"Clubs",
+	"Spades",
+};
+
+
 void
 usage(FILE* f)
 {
@@ -17,12 +29,14 @@ usage(FILE* f)
 	fprintf(f, "    dice        to roll 1d6\n");
 	fprintf(f, "    dice n      to roll nd6\n");
 	fprintf(f, "    dice n k    to roll ndk\n");
+	fprintf(f, "    dice n card to roll n cards, with replacement\n");
 }
 
 
 int
 main(int argc, char** argv)
 {
+    u32 draw_cards = 0;
 	i32 n = 0;
 	i32 k = 0;
 
@@ -87,8 +101,16 @@ main(int argc, char** argv)
 			}
 			if (valid_k == argv[2])
 			{
-				usage(stderr);
-				exit(1);
+				const char* card_str = "card";
+				if (strncmp(argv[2], card_str, strlen(card_str)) == 0)
+				{
+					draw_cards = 1;
+				}
+				else
+				{
+					usage(stderr);
+					exit(1);
+				}
 			}
 		}
 	}
@@ -96,15 +118,27 @@ main(int argc, char** argv)
 	{
 		assert(false && "argument count should be 3 at this point");
 	}
-
 	for (i32 i=0; i<n; i+=1)
 	{
-		i32 roll = rand() % k + 1;
-		if (i > 0)
+		if (draw_cards)
 		{
-			fprintf(stdout, " ");
+			i32 suit = rand() % 4;
+			i32 rank = rand() % 11;
+			if (i > 0)
+			{
+				fprintf(stdout, ", ");
+			}
+			fprintf(stdout, "%s of %s", rank_strs[rank], suit_strs[suit]);
 		}
-		fprintf(stdout, "%d", roll);
+		else
+		{
+			i32 roll = rand() % k + 1;
+			if (i > 0)
+			{
+				fprintf(stdout, " ");
+			}
+			fprintf(stdout, "%d", roll);
+		}
 	}
 	fprintf(stdout, "\n");
 }
